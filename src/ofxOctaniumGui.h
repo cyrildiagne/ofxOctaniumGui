@@ -17,44 +17,12 @@
 #include "Delegates.h"
 #include "LogWindow.h"
 
+#include "ofxXmlSettings.h"
+#include "ofxOctaniumGuiLogger.h"
+
 using namespace octanium::gui;
 
-
-class ofxOctaniumGuiLogger : public ofBaseLoggerChannel {
-public:
-    
-    void setLogWindow(LogWindow* logWindow_) {
-        logWindow = logWindow_;
-    }
-    LogLevel getLogLevel(ofLogLevel level) {
-        if(level<OF_LOG_WARNING) return LOG_LEVEL_LOG;
-        else if(level<OF_LOG_ERROR) return LOG_LEVEL_WARNING;
-        return LOG_LEVEL_ERROR;
-    }
-    void log(ofLogLevel level, const string & module, const string & message) {
-        consoleChannel.log(level, module, message);
-        logWindow->log(getLogLevel(level), module, message);
-    }
-    void log(ofLogLevel level, const string & module, const char* format, ...) {
-        va_list args;
-        va_start(args, format);
-        log(level, module, format, args);
-        va_end(args);
-    }
-    void log(ofLogLevel level, const string & module, const char* format, va_list args) {
-        consoleChannel.log(level, module, format, args);
-        LogLevel logLevel = getLogLevel(level);
-        logWindow->log(logLevel, module, format, args);
-    }
-    
-private:
-    
-    ofConsoleLoggerChannel consoleChannel;
-    LogWindow* logWindow;
-};
-
-
-class ofxOctaniumGui : public ofxGwen {
+class ofxOctaniumGui : public ofxGwen, public SettingsWindowDelegate {
     
 public:
     
@@ -64,13 +32,24 @@ public:
     void hide();
     void toggleView() { if (isVisible()) hide(); else show(); }
     
+    void loadSettings(string filename);
     
+    void loadSettings();
+    void saveSettings();
+    void saveSettingsAs();
+    void resetSettings();
     
     AppGuiBase* get() { return appGui; }
     
     /* Components */
     
     void addSlider(string name, float& prop, float minValue, float maxValue);
+    
+    /* App Menu */
+    
+    void addAppMenuItem(MenuItemType type, string label, string shortcut = "", string icon = "") {
+        appGui->getMenu()->addItem(MENU_APP, type, label, shortcut, icon);
+    }
     
     /* File  Menu */
     
@@ -101,6 +80,12 @@ private:
     
     ofPtr<ofxOctaniumGuiLogger> logger;
     
+    ofxXmlSettings settingsXML;
+    string currSettingsFilePath;
+    
+    char* getComponentId(string label);
+    
+    void load(string xmlPath);
     void keyPressed(ofKeyEventArgs& args);
 };
 

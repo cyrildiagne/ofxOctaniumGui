@@ -18,6 +18,8 @@ void ofxOctaniumGui::setup() {
     appGui = new AppGuiBase( getCanvas() );
     appGui->SetPos(0, 0);
     
+    appGui->getSettingsWindow()->setDelegate(this);
+    
     logger = ofPtr<ofxOctaniumGuiLogger>(new ofxOctaniumGuiLogger());
     logger->setLogWindow(appGui->getLogWindow());
     
@@ -36,6 +38,79 @@ void ofxOctaniumGui::hide() {
     
     ofxGwen::hide();
     ofHideCursor();
+}
+
+void ofxOctaniumGui::loadSettings(string filename) {
+    load(filename);
+}
+
+void ofxOctaniumGui::loadSettings() {
+    
+    ofFileDialogResult dialogResult = ofSystemLoadDialog("", false, ofToDataPath("", true));
+    if(dialogResult.bSuccess) {
+        load(dialogResult.filePath);
+    }
+}
+
+void ofxOctaniumGui::saveSettings(){
+    
+    if(currSettingsFilePath == "") {
+        ofLog() << "Could not specify filename for xml. Use \"Save as\" or load a file another first";
+    }
+    
+    if(settingsXML.save(currSettingsFilePath)) {
+        ofLog() << "Settings saved!";
+    }
+}
+
+void ofxOctaniumGui::saveSettingsAs(){
+    
+    ofFileDialogResult dialogResult = ofSystemSaveDialog("", "Save file as..");
+    if(dialogResult.bSuccess) {
+        
+        settingsXML.clear();
+        settingsXML.addTag("settings");
+        settingsXML.pushTag("settings");
+        vector<BaseComponent*> comps = appGui->getSettingsWindow()->getComponents();
+        int currTag;
+        for(int i=0; i<comps.size(); i++) {
+            settingsXML.addValue( getComponentId( comps[i]->getName() ), comps[i]->getValue() );
+        }
+        
+        if (settingsXML.save(dialogResult.filePath))
+            ofLog() << "Settings saved!";
+    }
+}
+
+char* ofxOctaniumGui::getComponentId(string label) {
+    
+    char *cstr = new char[label.length() + 1];
+    strcpy(cstr, label.c_str());
+    int size = strlen(cstr);
+    std::replace(&cstr[0], &cstr[size], ' ', '_');
+    return cstr;
+}
+
+void ofxOctaniumGui::resetSettings(){
+    
+    load("default.xml");
+}
+
+void ofxOctaniumGui::load(string xmlPath) {
+    
+    if (settingsXML.load(xmlPath)) {
+        currSettingsFilePath = xmlPath;
+        
+        settingsXML.pushTag("settings");
+        vector<BaseComponent*> comps = appGui->getSettingsWindow()->getComponents();
+        int currTag;
+        for(int i=0; i<comps.size(); i++) {
+            float val = settingsXML.getValue( getComponentId( comps[i]->getName() ), 0.0f );
+            comps[i]->setFloatValue( val );
+        }
+        
+        ofLog() << "Settings loaded!";
+    }
 }
 
 void ofxOctaniumGui::addSlider(string name, float& prop, float minValue, float maxValue) {
