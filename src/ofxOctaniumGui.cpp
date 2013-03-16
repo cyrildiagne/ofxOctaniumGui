@@ -19,9 +19,12 @@ void ofxOctaniumGui::setup() {
     appGui->SetPos(0, 0);
     
     appGui->getSettingsWindow()->setDelegate(this);
+    appGui->openWindow(WINDOW_SETTINGS);
     
     logger = ofPtr<ofxOctaniumGuiLogger>(new ofxOctaniumGuiLogger());
     logger->setLogWindow(appGui->getLogWindow());
+    
+    hide();
     
     ofLog::setChannel(logger);
     
@@ -31,13 +34,13 @@ void ofxOctaniumGui::setup() {
 void ofxOctaniumGui::show() {
     
     ofxGwen::show();
-    ofShowCursor();
+    //ofShowCursor();
 }
 
 void ofxOctaniumGui::hide() {
     
     ofxGwen::hide();
-    ofHideCursor();
+    //ofHideCursor();
 }
 
 void ofxOctaniumGui::loadSettings(string filename) {
@@ -57,29 +60,31 @@ void ofxOctaniumGui::saveSettings(){
     if(currSettingsFilePath == "") {
         ofLog() << "Could not specify filename for xml. Use \"Save as\" or load a file another first";
     }
-    
-    if(settingsXML.save(currSettingsFilePath)) {
-        ofLog() << "Settings saved!";
-    }
+    save(currSettingsFilePath);
 }
 
 void ofxOctaniumGui::saveSettingsAs(){
     
     ofFileDialogResult dialogResult = ofSystemSaveDialog("", "Save file as..");
     if(dialogResult.bSuccess) {
-        
-        settingsXML.clear();
-        settingsXML.addTag("settings");
-        settingsXML.pushTag("settings");
-        vector<BaseComponent*> comps = appGui->getSettingsWindow()->getComponents();
-        int currTag;
-        for(int i=0; i<comps.size(); i++) {
-            settingsXML.addValue( getComponentId( comps[i]->getName() ), comps[i]->getValue() );
-        }
-        
-        if (settingsXML.save(dialogResult.filePath))
-            ofLog() << "Settings saved!";
+        save(dialogResult.filePath);
     }
+}
+
+void ofxOctaniumGui::save(string filename) {
+    
+    while(settingsXML.getPushLevel()) settingsXML.popTag();
+    settingsXML.clear();
+    settingsXML.addTag("settings");
+    settingsXML.pushTag("settings");
+    vector<BaseComponent*> comps = appGui->getSettingsWindow()->getComponents();
+    int currTag;
+    for(int i=0; i<comps.size(); i++) {
+        settingsXML.addValue( getComponentId( comps[i]->getName() ), comps[i]->getValue() );
+    }
+    
+    if (settingsXML.save(filename))
+        ofLog() << "Settings saved as!";
 }
 
 char* ofxOctaniumGui::getComponentId(string label) {
@@ -146,7 +151,7 @@ void ofxOctaniumGui::keyPressed(ofKeyEventArgs& args) {
             }
         } break;
             
-        case 's': {
+        case '\t': {
             
             ofResizeEventArgs e;
             e.width = ofGetWidth();

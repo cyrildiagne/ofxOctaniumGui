@@ -16,12 +16,23 @@ using namespace Gwen;
 GWEN_CONTROL_CONSTRUCTOR( LogWindow )
 {
     SetTitle( Utility::Format( L"Logs" ) );
-    SetSize( 300, 400 );
+    SetSize( 300, 200 );
     SetPos( 100, 100 );
     Hide();
     
+    clearBt = new Controls::Button(this);
+    clearBt->SetSize(70, 20);
+    clearBt->SetText("Clear");
+    clearBt->SetMargin( Margin(0, 0, 5, 0));
+    clearBt->Dock(Pos::Bottom);
+    clearBt->onPress.Add(this, &ThisClass::btClearClicked);
+    
     m_TextOutput = new Controls::ListBox( this );
     m_TextOutput->Dock( Pos::Fill );
+}
+
+void LogWindow::btClearClicked(Gwen::Controls::Base* bt) {
+    m_TextOutput->Clear();
 }
 
 void LogWindow::log(LogLevel level, const string & module, const string & message){

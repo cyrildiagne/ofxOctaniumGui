@@ -85,6 +85,7 @@ private:
     
     char* getComponentId(string label);
     
+    void save(string filename);
     void load(string xmlPath);
     void keyPressed(ofKeyEventArgs& args);
 };

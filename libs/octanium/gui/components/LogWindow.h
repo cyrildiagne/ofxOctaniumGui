@@ -43,6 +43,10 @@ namespace octanium {
             
         private:
             
+            Gwen::Controls::Button* clearBt;
+            
+            void btClearClicked(Gwen::Controls::Base* bt);
+            
             string getLogLevelName(LogLevel level);
         };
 

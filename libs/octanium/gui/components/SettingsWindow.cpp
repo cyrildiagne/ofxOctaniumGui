@@ -17,11 +17,11 @@ GWEN_CONTROL_CONSTRUCTOR( SettingsWindow )
     
     delegate = NULL;
     
-    SetSize(320, 200);
+    SetSize(310, 300);
     SetPos(50, 50);
     SetPadding(5);
-    SetMinimumSize(Gwen::Point(320, 110));
-    SetMaximumSize(Gwen::Point(320, 200));
+    SetMinimumSize(Gwen::Point(310, 110));
+    SetMaximumSize(Gwen::Point(310, 200));
     
     bts = new Controls::Base(this);
     bts->SetSize(300, 30);
@@ -29,7 +29,7 @@ GWEN_CONTROL_CONSTRUCTOR( SettingsWindow )
     bts->Dock(Pos::Bottom);
     bts->SetPadding( Padding(0, 8, 0, 2) );
     
-    int btW = 70;
+    int btW = 66;
     
     btLoad = new Controls::Button(bts);
     btLoad->SetSize(btW, 20);
@@ -100,7 +100,7 @@ void SettingsWindow::addSlider(string name, float& prop, float minValue, float m
     
     int h = min(Height() + slider->Height(), 400);
     
-    SetMaximumSize(Gwen::Point(320, bts->Height() + 40 + slider->Bottom()));
+    SetMaximumSize(Gwen::Point(310, bts->Height() + 40 + slider->Bottom()));
     
     components.push_back(slider);
 }
