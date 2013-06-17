@@ -8,6 +8,9 @@
 
 #include "SettingsWindow.h"
 
+#include "octanium/gui/components/Slider.h"
+#include "octanium/gui/components/Checkbox.h"
+
 using namespace octanium::gui;
 using namespace Gwen;
 
@@ -69,8 +72,8 @@ GWEN_CONTROL_CONSTRUCTOR( SettingsWindow )
     prev = NULL;
 }
 
-void SettingsWindow::btClicked(Controls::Base* bt) {
-    
+void SettingsWindow::btClicked(Controls::Base* bt)
+{
     if(!delegate) return;
     
     if(bt==btLoad) {
@@ -87,8 +90,8 @@ void SettingsWindow::btClicked(Controls::Base* bt) {
     }
 }
 
-void SettingsWindow::addSlider(string name, float& prop, float minValue, float maxValue) {
-    
+void SettingsWindow::addSlider(string name, float& prop, float minValue, float maxValue)
+{
     Slider* slider = new Slider(scroll);
     slider->setup(name, prop, minValue, maxValue);
     
@@ -98,9 +101,27 @@ void SettingsWindow::addSlider(string name, float& prop, float minValue, float m
     
     prev = slider;
     
-    int h = min(Height() + slider->Height(), 400);
+    int h = min(Height() + slider->Height(), 500);
     
     SetMaximumSize(Gwen::Point(310, bts->Height() + 40 + slider->Bottom()));
     
     components.push_back(slider);
+}
+
+void SettingsWindow::addCheckbox(string name, bool& prop)
+{
+    Checkbox* checkbox = new Checkbox(scroll);
+    checkbox->setup(name, prop);
+    
+    if(prev) {
+        Gwen::Align::PlaceBelow(checkbox, prev);
+    }
+    
+    prev = checkbox;
+    
+    int h = min(Height() + checkbox->Height(), 500);
+    
+    SetMaximumSize(Gwen::Point(310, bts->Height() + 40 + checkbox->Bottom()));
+    
+    components.push_back(checkbox);
 }

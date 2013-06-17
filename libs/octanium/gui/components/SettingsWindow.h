@@ -17,7 +17,7 @@
 #include "Gwen/Controls/WindowControl.h"
 #include "Gwen/Controls/ScrollControl.h"
 
-#include "octanium/gui/components/Slider.h"
+#include "octanium/gui/Types.h"
 
 using namespace std;
 
@@ -46,6 +46,7 @@ namespace octanium {
             GWEN_CONTROL( SettingsWindow, Gwen::Controls::WindowControl );
             
             void addSlider(string name, float& prop, float minValue, float maxValue);
+            void addCheckbox(string name, bool& prop);
             
             void setDelegate(SettingsWindowDelegate* delegate) { this->delegate = delegate; }
             

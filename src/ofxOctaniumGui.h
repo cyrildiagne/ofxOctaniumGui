@@ -44,6 +44,7 @@ public:
     /* Components */
     
     void addSlider(string name, float& prop, float minValue, float maxValue);
+    void addCheckbox(string name, bool& prop);
     
     /* App Menu */
     

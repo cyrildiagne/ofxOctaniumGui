@@ -18,6 +18,7 @@ Slider::Slider( Gwen::Controls::Base* pParent, const Gwen::String& pName ) : Bas
     
     label = new Controls::Label(this);
     label->SetPos(0, 10);
+    label->SetWidth(200);
     label->SetFont(label->GetFont()->facename, 7, false);
     
     input = new NumericUpDownFloat(this);

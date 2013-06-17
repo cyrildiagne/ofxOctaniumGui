@@ -83,8 +83,8 @@ void ofxOctaniumGui::save(string filename) {
         settingsXML.addValue( getComponentId( comps[i]->getName() ), comps[i]->getValue() );
     }
     
-    if (settingsXML.save(filename))
-        ofLog() << "Settings saved as!";
+    if (settingsXML.saveFile(filename))
+        ofLog() << "Settings saved as";
 }
 
 char* ofxOctaniumGui::getComponentId(string label) {
@@ -103,8 +103,9 @@ void ofxOctaniumGui::resetSettings(){
 
 void ofxOctaniumGui::load(string xmlPath) {
     
-    if (settingsXML.load(xmlPath)) {
-        currSettingsFilePath = xmlPath;
+    currSettingsFilePath = xmlPath;
+    
+    if (settingsXML.loadFile(xmlPath)) {
         
         settingsXML.pushTag("settings");
         vector<BaseComponent*> comps = appGui->getSettingsWindow()->getComponents();
@@ -114,16 +115,24 @@ void ofxOctaniumGui::load(string xmlPath) {
             comps[i]->setFloatValue( val );
         }
         
-        ofLog() << "Settings loaded!";
+        ofLog() << "Settings loaded";
     }
 }
 
-void ofxOctaniumGui::addSlider(string name, float& prop, float minValue, float maxValue) {
-    
+void ofxOctaniumGui::addSlider(string name, float& prop, float minValue, float maxValue)
+{
     if(!appGui->getMenu()->i_settings) {
         addWindowMenuItem(MENU_ITEM_SETTINGS);
     }
     appGui->getSettingsWindow()->addSlider(name, prop, minValue, maxValue);
+}
+
+void ofxOctaniumGui::addCheckbox(string name, bool& prop)
+{
+    if(!appGui->getMenu()->i_settings) {
+        addWindowMenuItem(MENU_ITEM_SETTINGS);
+    }
+    appGui->getSettingsWindow()->addCheckbox(name, prop);
 }
 
 Gwen::Skin::Base* ofxOctaniumGui::createSkin(Gwen::Renderer::OpenGL *renderer, const string& default_font, const string& skin_texture_path)
